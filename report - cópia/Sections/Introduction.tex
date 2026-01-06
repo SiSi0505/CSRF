@@ -1,0 +1,57 @@
+\section{Introduction}
+
+This labwork investigates the use of linear precoding and beamforming techniques in multiple-input multiple-output (MIMO) communication systems, with particular focus on their impact on downlink performance. In multi-user and multi-stream MIMO scenarios, the simultaneous transmission of several data streams leads to inter-stream and inter-user interference, which must be properly managed in order to fully exploit the available spatial degrees of freedom while maintaining reliable communication.
+
+In the first phase of the work, a MIMO-OFDM downlink system is analysed under the assumption of perfect channel state information (CSI) at both the transmitter and the receiver, as well as ideal time and frequency synchronisation. Two linear precoding techniques are considered and compared: Zero-Forcing (ZF) precoding and Singular Value Decomposition (SVD) based precoding. A Rayleigh fading channel model is assumed, and full spatial multiplexing is adopted, requiring precoding to ensure independence between the transmitted data streams. System performance is evaluated in terms of bit-error rate (BER), achievable capacity, and computational complexity.
+
+In the second phase, the analysis is extended to a beamforming-based transmission scenario in a multi-user MIMO system, where users are equipped with multiple antennas. Both perfect and imperfect channel estimation are considered in order to assess the impact of channel estimation errors on inter-user interference and overall system performance. The influence of beamforming on BER and interference mitigation is analysed and compared with scenarios where beamforming is not employed.
+
+Throughout the work, transmission is based on an OFDM waveform, and Monte Carlo simulations are used to obtain statistically meaningful performance results. This laboratory work aims to provide insight into the trade-offs between performance, robustness, and computational complexity associated with different linear precoding and beamforming strategies in MIMO systems.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  block/.style={draw, rectangle, minimum height=1cm, minimum width=3cm, align=center},
+  arrow/.style={-Latex, thick},
+  dashedbox/.style={draw, dashed, inner sep=0.5cm},
+  font=\small
+]
+
+% -------- Transmitter --------
+\node (btx) at (0,2) {Bits};
+\node[block] (mod) at (3,2) {Modulation};
+\node[block] (mimo) at (6.5,2) {MIMO Processing};
+\node[block] (ofdm) at (10,2) {OFDM};
+
+\draw[arrow] (btx) -- (mod);
+\draw[arrow] (mod) -- (mimo);
+\draw[arrow] (mimo) -- (ofdm);
+
+\node[dashedbox, fit=(btx)(ofdm), label=above:{\textbf{Transmitter}}] {};
+
+% -------- Channel --------
+\node[block] (chan) at (10,0) {Wireless Channel};
+\draw[arrow] (ofdm) -- (chan);
+
+% -------- Receiver --------
+\node[block] (ofdmr) at (10,-2) {OFDM};
+\node[block] (rxmimo) at (6.5,-2) {MIMO Processing};
+\node[block] (demod) at (3,-2) {Demodulation};
+\node (brx) at (0,-2) {Bits};
+
+\draw[arrow] (chan) -- (ofdmr);
+\draw[arrow] (ofdmr) -- (rxmimo);
+\draw[arrow] (rxmimo) -- (demod);
+\draw[arrow] (demod) -- (brx);
+
+\node[dashedbox, fit=(ofdmr)(brx), label=below:{\textbf{Receiver}}] {};
+
+\end{tikzpicture}
+\caption{Generic block diagram of the MIMO-OFDM transmission system considered in this work.}
+\label{fig:generic_system}
+\end{figure}
+Figure~\ref{fig:generic_system} shows a generic block diagram of the MIMO-OFDM communication system considered in this work. The transmitter processes the information bits through modulation, MIMO spatial processing and OFDM prior to transmission over the wireless channel. At the receiver, the inverse operations are applied in order to recover the transmitted data. More detailed processing blocks are introduced and analysed in the subsequent phases.
+
+
+
+\newpage

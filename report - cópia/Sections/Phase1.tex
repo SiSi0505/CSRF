@@ -1,0 +1,191 @@
+\section{Phase I -- Downlink Precoding with Perfect CSI}
+\label{sec:phase1}
+\subsection{System Implemented and Parameters}
+
+In this first phase, a downlink MIMO-OFDM transmission system is considered under the assumption of perfect channel state information (CSI) at both the transmitter and the receiver. Ideal time and frequency synchronisation are also assumed. The objective of this phase is to evaluate and compare different linear precoding techniques in terms of bit-error rate, achievable capacity, and computational complexity.
+
+The simulated system consists of a base station equipped with $N_{\mathrm{tx}} = 16$ transmit antennas and a receiver with $N_{\mathrm{rx}} = 16$ receive antennas. Full spatial multiplexing is employed, with $N_s = 16$ independent data streams transmitted simultaneously. An OFDM waveform with $N = 512$ subcarriers is used, and Monte Carlo simulations are performed over $N_{\mathrm{slot}} = 100$ independent channel realisations for each signal-to-noise ratio point.
+
+The wireless channel is modelled as a Rayleigh fading MIMO channel, where the channel matrix is assumed to remain constant over all subcarriers within a given OFDM symbol (flat fading per slot). Additive white Gaussian noise (AWGN) is added at the receiver. The signal-to-noise ratio is defined in terms of the energy per bit to noise power spectral density ratio $E_b/N_0$, which is swept from $-5$~dB to $22$~dB.
+
+At the transmitter, information bits are mapped onto 16-QAM symbols with unit average power. The symbols are then spatially multiplexed and processed by a linear precoder prior to OFDM modulation and transmission over the MIMO channel. Two linear precoding techniques are considered in this phase: Zero-Forcing (ZF) precoding and Singular Value Decomposition (SVD) based precoding.
+
+At the receiver, OFDM demodulation is performed followed by linear combining and equalisation according to the adopted precoding scheme. The estimated symbols are finally demapped to recover the transmitted bit stream.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  block/.style={draw, rectangle, minimum height=0.95cm, minimum width=2.65cm, align=center},
+  arrow/.style={-Latex, thick},
+  dashedbox/.style={draw, dashed, rounded corners, inner sep=0.35cm},
+  font=\small
+]
+
+% ---------------- Common input chain ----------------
+\node (bits) at (0,0) {Bits};
+\node[block] (qam) at (2.6,0) {16-QAM\\Mapping};
+\node[block] (smap) at (5.8,0) {Stream\\Mapping ($N_s$)};
+
+\draw[arrow] (bits) -- (qam);
+\draw[arrow] (qam) -- (smap);
+
+% Split node (just a coordinate)
+\node (split) at (7.6,0) {};
+\draw[arrow] (smap) -- (split);
+
+% ---------------- SVD branch (top) ----------------
+\node[block] (svdprec) at (10.6, 1.6) {SVD Precoder\\$W=V(:,1\!:\!N_s)$};
+\node[block] (svdch)   at (14.0, 1.6) {MIMO Channel\\$y=Hx+n$};
+\node[block] (svdcomb) at (17.4, 1.6) {Combiner\\$U^H$ and\\Divide by $\Sigma$};
+
+\draw[arrow] (split) |- (svdprec.west);
+\draw[arrow] (svdprec) -- (svdch);
+\draw[arrow] (svdch) -- (svdcomb);
+
+\node[dashedbox, fit=(svdprec)(svdcomb), label=above:{\textbf{SVD Precoding}}] (boxsvd) {};
+
+% ---------------- ZF branch (bottom) ----------------
+\node[block] (zfprec) at (10.6,-1.6) {ZF Precoder\\$W=H^H(HH^H)^{-1}$};
+\node[block] (zfch)   at (14.0,-1.6) {MIMO Channel\\$y=Hx+n$};
+\node[block] (zfeq)   at (17.4,-1.6) {Equaliser using\\$H_{\mathrm{eff}}=HW$};
+
+\draw[arrow] (split) |- (zfprec.west);
+\draw[arrow] (zfprec) -- (zfch);
+\draw[arrow] (zfch) -- (zfeq);
+
+\node[dashedbox, fit=(zfprec)(zfeq), label=below:{\textbf{ZF Precoding}}] (boxzf) {};
+
+% ---------------- Output / metrics ----------------
+\node[block] (metrics) at (21.0,0) {BER\\Capacity};
+
+% ONLY the final arrows to the metrics block:
+\draw[arrow] (svdcomb.east) -- ([yshift=0.35cm]metrics.west);
+\draw[arrow] (zfeq.east)    -- ([yshift=-0.35cm]metrics.west);
+
+\end{tikzpicture}%
+}
+\caption{Phase I processing chain highlighting the differences between SVD and ZF precoding in the downlink.}
+\label{fig:phase1_svd_zf}
+\end{figure}
+
+
+
+
+\subsection{Signals}
+
+Let $\mathbf{s}_k \in \mathbb{C}^{N_s \times 1}$ denote the vector of modulated symbols transmitted on the $k$-th OFDM subcarrier, where $N_s$ is the number of spatial streams. After stream mapping, the transmit signal is obtained by applying a linear precoder $\mathbf{W} \in \mathbb{C}^{N_{\mathrm{tx}} \times N_s}$, resulting in
+\begin{equation}
+\mathbf{x}_k = \mathbf{W}\mathbf{s}_k .
+\end{equation}
+
+The transmitted signal propagates through a flat Rayleigh fading MIMO channel $\mathbf{H} \in \mathbb{C}^{N_{\mathrm{rx}} \times N_{\mathrm{tx}}}$ and is corrupted by additive white Gaussian noise. The received signal on the $k$-th subcarrier is therefore given by
+\begin{equation}
+\mathbf{y}_k = \mathbf{H}\mathbf{x}_k + \mathbf{n}_k ,
+\end{equation}
+where $\mathbf{n}_k$ is a complex Gaussian noise vector with independent entries.
+
+\subsubsection{SVD Precoding}
+
+For SVD-based precoding, the channel matrix is decomposed as
+\begin{equation}
+\mathbf{H} = \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^H ,
+\end{equation}
+where $\mathbf{U}$ and $\mathbf{V}$ are unitary matrices and $\boldsymbol{\Sigma}$ contains the singular values of the channel. The precoder is chosen as $\mathbf{W}_{\mathrm{SVD}} = \mathbf{V}(:,1\!:\!N_s)$, while the receiver applies the corresponding linear combiner $\mathbf{U}^H$. This processing diagonalises the MIMO channel, resulting in $N_s$ parallel and independent subchannels. Each stream is then equalised by dividing by the corresponding singular value.
+
+\subsubsection{ZF Precoding}
+
+In the case of Zero-Forcing precoding, the precoder is designed as
+\begin{equation}
+\mathbf{W}_{\mathrm{ZF}} = \mathbf{H}^H(\mathbf{H}\mathbf{H}^H)^{-1},
+\end{equation}
+followed by power normalisation. The resulting effective channel is given by $\mathbf{H}_{\mathrm{eff}} = \mathbf{H}\mathbf{W}_{\mathrm{ZF}}$. At the receiver, a linear equaliser matched to $\mathbf{H}_{\mathrm{eff}}$ is applied in order to mitigate inter-stream interference.
+
+
+
+
+\subsection{Results}
+
+In this subsection, the performance of the considered precoding techniques is evaluated and compared in terms of bit-error rate (BER), achievable capacity, and computational complexity. All results are obtained through Monte Carlo simulations under the assumptions described in the previous sections.
+
+\subsubsection{Bit-Error Rate Performance}
+
+The bit-error rate (BER) performance of SVD and Zero-Forcing (ZF) precoding is evaluated as a function of the energy-per-bit to noise power spectral density ratio $E_b/N_0$. For each SNR point, more than one million bits are transmitted, and the BER is computed by direct comparison between the transmitted and detected bit streams.
+
+Figure~\ref{fig:ber_phase1} shows the BER performance for a $16 \times 16$ MIMO-OFDM system employing full spatial multiplexing with $N_s = 16$ streams. It can be observed that SVD precoding consistently outperforms ZF precoding across the entire SNR range. This behaviour is expected, since SVD precoding diagonalises the MIMO channel, completely eliminating inter-stream interference and resulting in independent parallel subchannels.
+
+In contrast, ZF precoding relies on channel inversion, which leads to noise enhancement, particularly in ill-conditioned channel realisations. As a consequence, ZF exhibits a higher BER, especially at low and moderate $E_b/N_0$ values.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{Images/fase1BER.png}
+\caption{BER performance of SVD and ZF precoding for a $16 \times 16$ MIMO-OFDM system.}
+\label{fig:ber_phase1}
+\end{figure}
+
+Overall, the results confirm that SVD precoding provides a clear BER advantage over ZF for the considered full spatial multiplexing configuration. The performance gap is mainly associated with the noise enhancement inherent to channel inversion in ZF precoding, while SVD processing leads to decoupled spatial subchannels.
+
+\subsubsection{Achievable Capacity}
+
+In addition to BER, the achievable spectral efficiency of the system is evaluated through the Shannon capacity. For a generic MIMO channel at the $k$-th OFDM subcarrier, the capacity is computed as
+\begin{equation}
+C_k = \log_2 \det \left( \mathbf{I} + \frac{\rho}{N_s}\mathbf{H}_k \mathbf{H}_k^H \right),
+\end{equation}
+where $\rho$ denotes the signal-to-noise ratio (SNR) and $N_s$ is the number of spatial streams. Since an OFDM waveform with $N$ subcarriers is considered, the overall capacity is obtained as the average across subcarriers,
+\begin{equation}
+C = \frac{1}{N}\sum_{k=1}^{N} C_k .
+\end{equation}
+
+When SVD precoding is applied, the channel can be decomposed as $\mathbf{H}_k = \mathbf{U}_k \boldsymbol{\Sigma}_k \mathbf{V}_k^H$, which diagonalises the MIMO channel into independent spatial modes. In this case, the capacity per subcarrier reduces to
+\begin{equation}
+C_{\mathrm{SVD}}(k) = \sum_{i=1}^{N_s} \log_2 \left( 1 + \frac{\rho}{N_s}\sigma_i^2 \right),
+\end{equation}
+where $\sigma_i$ denotes the $i$-th singular value of the channel.
+
+Figure~\ref{fig:cap_phase1} shows the average achievable capacity as a function of $E_b/N_0$ for SVD and ZF precoding. The results indicate that SVD achieves a significantly higher capacity across the entire SNR range. This behaviour is expected because SVD fully diagonalises the channel and preserves the spatial gains associated with the strongest singular modes. In contrast, ZF precoding requires channel inversion, which reduces the effective channel gain and leads to a noticeable capacity loss.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{Images/fase1CAPmed.png}
+\caption{Average achievable capacity of SVD and ZF precoding for a $16 \times 16$ MIMO-OFDM system.}
+\label{fig:cap_phase1}
+\end{figure}
+
+In the implemented simulator, the channel matrix is constant across all subcarriers within each slot; therefore, the averaging over $k$ yields the same value per slot, while Monte Carlo averaging over multiple slots captures the channel variability.
+
+\subsubsection{Computational Complexity}
+
+The computational complexity of the considered precoding techniques was evaluated empirically by measuring execution time in MATLAB using the \texttt{tic} and \texttt{toc} functions. The objective was to estimate the average time required to compute each precoder matrix, including the Frobenius-norm power normalisation used in the simulator, for a $16\times16$ Rayleigh fading MIMO channel.
+
+For each technique, the measurement was repeated over $N_{\mathrm{reps}}=200$ independent random channel realisations. Since the channel matrix is randomly generated at each repetition, small variations in runtime are expected due to differences in channel conditioning and due to the fact that MATLAB relies on highly optimised numerical libraries (e.g., multi-threaded BLAS/LAPACK routines). To mitigate these fluctuations and obtain a representative estimate, the reported execution times correspond to the average across all repetitions.
+
+Table~\ref{tab:complexity_phase1} summarises the measured average execution times for SVD and ZF precoding. For the considered setup, the SVD-based computation exhibited a lower average runtime than the ZF computation, with a ratio of $T_{\mathrm{SVD}}/T_{\mathrm{ZF}} \approx 0.33$. It should be noted that these measurements reflect practical runtime behaviour for the specific matrix dimensions and software environment used, rather than asymptotic algorithmic complexity.
+
+\begin{table}[H]
+\centering
+\caption{Average computational time of SVD and ZF precoding measured using MATLAB's \texttt{tic}/\texttt{toc} over $N_{\mathrm{reps}}=200$ random channel realisations.}
+\label{tab:complexity_phase1}
+\begin{tabular}{lcc}
+\hline
+\textbf{Precoding Scheme} & \textbf{Average Time [s]} & \textbf{Relative Cost} \\
+\hline
+SVD Precoding & $1.609 \times 10^{-4}$ & 0.33 \\
+ZF Precoding  & $4.804 \times 10^{-4}$ & 1.00 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Phase I Conclusions}
+
+In this first phase, a downlink MIMO-OFDM system with perfect channel state information was analysed, focusing on the comparison between SVD-based and Zero-Forcing (ZF) linear precoding techniques. The evaluation was carried out in terms of bit-error rate (BER), achievable capacity, and computational complexity, using Monte Carlo simulations for a $16 \times 16$ MIMO configuration with full spatial multiplexing.
+
+From the BER results, it was observed that SVD precoding consistently outperforms ZF precoding across the entire range of $E_b/N_0$ values considered. This behaviour is a direct consequence of the channel diagonalisation provided by SVD, which transforms the MIMO channel into a set of independent parallel subchannels and effectively eliminates inter-stream interference. In contrast, ZF precoding relies on channel inversion, which leads to noise enhancement, particularly for ill-conditioned channel realisations, resulting in a higher BER, especially at low and moderate SNR values.
+
+A similar trend is observed in terms of achievable capacity. SVD precoding achieves a significantly higher spectral efficiency when compared to ZF precoding. By aligning transmission with the dominant singular modes of the channel, SVD enables a more efficient exploitation of the available spatial degrees of freedom. On the other hand, the effective channel gains obtained with ZF precoding are reduced due to the inversion process, leading to a noticeable loss in capacity, particularly at low SNR.
+
+Regarding computational complexity, an empirical analysis based on execution time measurements using MATLAB's \texttt{tic}/\texttt{toc} functions
+
+
+
+
+

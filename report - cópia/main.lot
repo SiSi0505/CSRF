@@ -1,0 +1,3 @@
+\babel@toc {english}{}\relax 
+\contentsline {table}{\numberline {1}{\ignorespaces Average computational time of SVD and ZF precoding measured using MATLAB's \texttt {tic}/\texttt {toc} over $N_{\mathrm {reps}}=200$ random channel realisations.}}{9}{table.caption.6}%
+\contentsline {table}{\numberline {2}{\ignorespaces Qualitative comparison of SVD and ZF precoding across the two analysed phases.}}{15}{table.caption.9}%

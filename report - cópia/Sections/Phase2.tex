@@ -1,0 +1,189 @@
+\section{Phase II -- Multi-User Beamforming with Imperfect CSI}
+\label{sec:phase2}
+
+\subsection{System Implemented and Parameters}
+
+In this second phase, a multi-user downlink MIMO-OFDM system is considered in order to analyse the impact of beamforming and imperfect channel state information (CSI) on system performance. The transmission scenario corresponds to configuration (b) defined in the problem statement, where a base station equipped with $N_{\mathrm{tx}}=16$ antennas serves two users, each equipped with $8$ receive antennas.
+
+Each user is allocated a single spatial data stream, resulting in a total of $N_s=2$ simultaneously transmitted streams. Linear precoding techniques are employed at the transmitter to mitigate inter-user and inter-stream interference. In particular, Zero-Forcing (ZF) and Singular Value Decomposition (SVD) based precoding are considered. The transmission waveform is OFDM, and a frequency-flat Rayleigh fading channel is assumed per OFDM symbol, with additive white Gaussian noise at the receiver.
+
+Unlike Phase~I, this phase explicitly considers the effect of imperfect channel knowledge at the transmitter. Channel estimation errors are modelled by introducing a mismatch between the true channel matrix $\mathbf{H}$ and the channel estimate $\widehat{\mathbf{H}}$ used for precoder computation. The precoder is designed based on $\widehat{\mathbf{H}}$, while signal propagation occurs through the true channel $\mathbf{H}$, leading to residual inter-user interference.
+
+In order to model an additional beamforming or array gain, a constant gain factor is applied to the transmitted symbol streams. System performance is evaluated primarily in terms of bit-error rate (BER) as a function of the signal-to-noise ratio, with particular emphasis on the impact of CSI imperfections on inter-user interference.
+
+
+\subsection{Signals}
+
+\subsubsection{Multi-User Signal Model}
+
+Let $\mathbf{s}_k \in \mathbb{C}^{N_s \times 1}$ denote the vector of transmitted symbols on subcarrier $k$, where each element corresponds to one user data stream. In the considered configuration, $N_s=2$, with one spatial stream allocated per user. The information symbols are drawn from a 16-QAM constellation with unit average power.
+
+At the transmitter, linear precoding is applied to spatially multiplex the user streams across the $N_{\mathrm{tx}}=16$ transmit antennas. The transmitted signal vector on subcarrier $k$ is given by
+\begin{equation}
+\mathbf{x}_k = \mathbf{W}\mathbf{s}_k ,
+\end{equation}
+where $\mathbf{W} \in \mathbb{C}^{N_{\mathrm{tx}} \times N_s}$ denotes the precoding matrix.
+
+To model an additional beamforming or array gain, the transmitted symbol vector is scaled by a constant factor, such that $\mathbf{s}_k \leftarrow \sqrt{G_{\mathrm{BF}}}\,\mathbf{s}_k$, where $G_{\mathrm{BF}}$ represents the beamforming gain applied in the simulation.
+
+The received signal at the users is expressed as
+\begin{equation}
+\mathbf{y}_k = \mathbf{H}\mathbf{x}_k + \mathbf{n}_k ,
+\end{equation}
+where $\mathbf{H} \in \mathbb{C}^{N_{\mathrm{rx}} \times N_{\mathrm{tx}}}$ is the Rayleigh fading MIMO channel matrix and $\mathbf{n}_k$ is additive white Gaussian noise. Due to the multi-user transmission, the received signal generally contains contributions from both intended and interfering user streams.
+
+In addition, a simplified beamforming gain model is adopted in this phase in order to
+capture the array gain provided by transmit beamforming. This effect is modelled by
+scaling the transmitted symbol vector by a constant factor $\sqrt{G_{\mathrm{BF}}}$,
+where $G_{\mathrm{BF}} = 10$ in the performed simulations. This approach allows isolating
+the impact of beamforming gain on system performance while maintaining a simple and
+transparent simulation model.
+
+
+
+\subsubsection{Impact of Imperfect CSI}
+
+In this phase, imperfect channel state information at the transmitter is explicitly considered. The transmitter is assumed to have access only to an estimate of the channel matrix,
+\begin{equation}
+\widehat{\mathbf{H}} = \mathbf{H} + \mathbf{E},
+\end{equation}
+where $\mathbf{E}$ models the channel estimation error. The estimation error is assumed to be independent of the true channel and is controlled by a predefined variance parameter.
+
+The precoding matrix $\mathbf{W}$ is computed using the estimated channel $\widehat{\mathbf{H}}$, while signal propagation occurs through the true channel $\mathbf{H}$. This mismatch prevents perfect interference suppression and leads to residual inter-user interference at the receiver.
+
+For Zero-Forcing (ZF) precoding, the precoder is obtained by inverting the estimated channel matrix, followed by power normalisation. Due to the channel inversion operation, ZF is particularly sensitive to estimation errors, which result in noise enhancement and significant performance degradation.
+
+For SVD-based precoding, the estimated channel is decomposed as $\widehat{\mathbf{H}}=\mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^H$, and the precoder is chosen as $\mathbf{W}_{\mathrm{SVD}}=\mathbf{V}(:,1\!:\!N_s)$. Although SVD-based precoding aims at diagonalising the channel, imperfect CSI prevents perfect diagonalisation of the true channel, and residual inter-user interference remains.
+
+As a consequence, the effective channel experienced by the transmitted streams is no longer interference-free, directly impacting both the bit-error rate and the achievable capacity, as analysed in the following section.
+
+\subsection{Results}
+
+In this subsection, the performance of the considered linear precoding techniques in a multi-user downlink MIMO-OFDM system is evaluated under imperfect channel state information. The results are obtained through Monte Carlo simulations and are presented in terms of bit-error rate (BER) and achievable capacity as functions of the energy-per-bit to noise power spectral density ratio $E_b/N_0$.
+\subsubsection{Bit-Error Rate Performance}
+
+Figure~\ref{fig:ber_phase2} shows the BER performance of SVD and Zero-Forcing (ZF) precoding for the considered two-user scenario with imperfect CSI. Each user is served by one spatial stream, and the precoder is designed based on an estimated channel matrix, while signal transmission occurs through the true channel.
+
+The results indicate that SVD-based precoding significantly outperforms ZF precoding across the entire $E_b/N_0$ range. SVD exhibits a steep BER decay as the signal-to-noise ratio increases, whereas ZF presents substantially higher BER values, even at moderate and high $E_b/N_0$.
+
+This behaviour is mainly attributed to the sensitivity of ZF precoding to channel estimation errors. Since ZF relies on channel inversion, inaccuracies in the estimated channel result in residual inter-user interference and noise enhancement. In contrast, SVD-based precoding is more robust to CSI imperfections, maintaining better interference mitigation and therefore superior BER performance.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{Images/fase2BER.png}
+\caption{Phase II BER performance for a two-user ($2 \times 8$ Rx) MIMO-OFDM system with imperfect CSI.}
+\label{fig:ber_phase2}
+\end{figure}
+
+\subsubsection{Achievable Capacity}
+
+Figure~\ref{fig:cap_phase2} presents the average achievable capacity as a function of $E_b/N_0$ for SVD and ZF precoding under the same imperfect CSI conditions. The capacity is computed using the effective channel formed by the combination of the true channel and the precoder derived from the estimated channel, ensuring that residual inter-user interference is properly accounted for.
+
+The results show that SVD-based precoding achieves a significantly higher spectral efficiency compared to ZF across the evaluated SNR range. Despite the presence of channel estimation errors, SVD preserves stronger effective channel gains, resulting in a nearly linear capacity growth with increasing $E_b/N_0$.
+
+In contrast, ZF precoding suffers from a pronounced capacity degradation. Residual inter-user interference and noise enhancement caused by imperfect channel inversion limit the achievable spectral efficiency and prevent ZF from fully exploiting the available spatial degrees of freedom.
+
+These results confirm that, in multi-user downlink scenarios with imperfect CSI, SVD-based precoding provides superior robustness and spectral efficiency when compared to ZF precoding.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{Images/fase2CAP.png}
+\caption{Phase II achievable capacity for a two-user ($2 \times 8$ Rx) MIMO-OFDM system with imperfect CSI.}
+\label{fig:cap_phase2}
+\end{figure}
+
+
+
+\subsection{Phase II Conclusions}
+
+In this phase, a multi-user downlink MIMO-OFDM system was analysed in order to assess the impact of beamforming and imperfect channel state information on system performance. A two-user scenario was considered, with each user equipped with eight receive antennas, and linear precoding was applied at the transmitter.
+
+The obtained results show that imperfect CSI has a significant impact on system performance due to residual inter-user interference. When the precoder is computed using an inaccurate channel estimate, perfect interference cancellation can no longer be achieved, leading to performance degradation.
+
+In terms of bit-error rate, SVD-based precoding consistently outperforms Zero-Forcing precoding across the entire $E_b/N_0$ range. While SVD maintains a steep BER decay even in the presence of channel estimation errors, ZF suffers from a pronounced degradation, particularly due to its sensitivity to channel inversion errors and noise enhancement.
+
+The achievable capacity results further confirm these observations. SVD-based precoding achieves higher spectral efficiency and exhibits a more robust behaviour under imperfect CSI, whereas ZF experiences a limited capacity growth as a consequence of persistent inter-user interference.
+
+Overall, the results demonstrate that, in multi-user downlink scenarios with imperfect channel knowledge, SVD-based precoding provides superior robustness and performance compared to ZF precoding, at the expense of increased computational complexity.
+
+\section{Overall Conclusions}
+
+This work investigated linear precoding and beamforming techniques for downlink
+MIMO-OFDM systems under different channel state information (CSI) assumptions.
+Two complementary scenarios were analysed. In Phase~I, a single-user MIMO-OFDM
+system with perfect CSI was considered, while Phase~II extended the analysis to
+a multi-user downlink scenario with beamforming and imperfect CSI.
+
+In Phase~I, both Zero-Forcing (ZF) and Singular Value Decomposition (SVD) based
+precoding were evaluated in terms of bit-error rate (BER), achievable capacity,
+and computational complexity. The results showed that SVD-based precoding
+consistently outperforms ZF precoding in terms of BER and achievable capacity
+across the entire $E_b/N_0$ range. This behaviour is explained by the ability of
+SVD to diagonalise the MIMO channel, creating independent parallel subchannels
+and effectively eliminating inter-stream interference. In contrast, ZF precoding
+relies on channel inversion, which leads to noise enhancement, particularly in
+ill-conditioned channel realisations. The computational complexity analysis
+confirmed that SVD precoding requires a higher execution time than ZF precoding,
+as expected due to the higher computational cost of singular value decomposition.
+
+Phase~II addressed a more realistic multi-user downlink scenario, where a base
+station equipped with multiple antennas simultaneously serves multiple users in
+the presence of imperfect CSI. The impact of channel estimation errors and
+beamforming gain was explicitly considered. The obtained results demonstrate
+that imperfect CSI has a significant impact on system performance, particularly
+due to residual inter-user interference that cannot be fully cancelled when the
+precoder is designed based on an inaccurate channel estimate.
+
+Under imperfect CSI, SVD-based precoding remains more robust than ZF precoding,
+exhibiting substantially lower BER and higher achievable capacity. While ZF
+precoding suffers from severe performance degradation due to its sensitivity to
+channel estimation errors and noise enhancement, SVD maintains better effective
+channel gains and interference mitigation capabilities. The achievable capacity
+results further confirm that SVD-based precoding provides superior spectral
+efficiency in multi-user scenarios with imperfect CSI.
+
+Overall, the results of this work highlight the fundamental trade-offs between
+performance, robustness, and computational complexity in linear precoding
+techniques. While SVD-based precoding entails higher computational complexity,
+it offers significant gains in reliability and spectral efficiency, particularly
+in challenging scenarios with imperfect channel knowledge. These conclusions
+underscore the importance of robust precoding strategies in practical multi-user
+MIMO-OFDM systems, such as those employed in modern wireless communication
+standards.
+Table~\ref{tab:overall_comparison} provides a consolidated qualitative comparison of the main performance trends observed for SVD and ZF precoding across both analysed phases.
+
+\begin{table}[H]
+\centering
+\caption{Qualitative comparison of SVD and ZF precoding across the two analysed phases.}
+\label{tab:overall_comparison}
+\begin{tabularx}{\textwidth}{lXX}
+\toprule
+\textbf{Criterion} & \textbf{SVD Precoding} & \textbf{ZF Precoding} \\
+\midrule
+BER (Phase I, CSI perfect) 
+& Lower BER across all $E_b/N_0$ 
+& Higher BER due to noise enhancement \\
+
+Achievable Capacity (Phase I) 
+& High, near-linear growth 
+& Significantly reduced \\
+
+Computational Complexity (Phase I) 
+& Higher (SVD decomposition) 
+& Lower (matrix inversion) \\
+
+\midrule
+BER Robustness to CSI Errors (Phase II) 
+& High robustness 
+& Strong degradation \\
+
+Achievable Capacity (Phase II) 
+& Preserved spatial efficiency 
+& Severely limited \\
+
+Sensitivity to Channel Estimation Errors 
+& Moderate 
+& High \\
+\bottomrule
+\end{tabularx}
+\end{table}

@@ -1,0 +1,7 @@
+\babel@toc {english}{}\relax 
+\contentsline {figure}{\numberline {1}{\ignorespaces Generic block diagram of the MIMO-OFDM transmission system considered in this work.}}{3}{figure.caption.2}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Phase I processing chain highlighting the differences between SVD and ZF precoding in the downlink.}}{5}{figure.caption.3}%
+\contentsline {figure}{\numberline {3}{\ignorespaces BER performance of SVD and ZF precoding for a $16 \times 16$ MIMO-OFDM system.}}{7}{figure.caption.4}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Average achievable capacity of SVD and ZF precoding for a $16 \times 16$ MIMO-OFDM system.}}{8}{figure.caption.5}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Phase II BER performance for a two-user ($2 \times 8$ Rx) MIMO-OFDM system with imperfect CSI.}}{12}{figure.caption.7}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Phase II achievable capacity for a two-user ($2 \times 8$ Rx) MIMO-OFDM system with imperfect CSI.}}{13}{figure.caption.8}%

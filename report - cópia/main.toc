@@ -1,0 +1,22 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {section}{\numberline {2}Phase I -- Downlink Precoding with Perfect CSI}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}System Implemented and Parameters}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Signals}{5}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}SVD Precoding}{6}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}ZF Precoding}{6}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}Results}{6}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Bit-Error Rate Performance}{6}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Achievable Capacity}{7}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Computational Complexity}{8}{subsubsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.4}Phase I Conclusions}{9}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Phase II -- Multi-User Beamforming with Imperfect CSI}{10}{section.3}%
+\contentsline {subsection}{\numberline {3.1}System Implemented and Parameters}{10}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Signals}{10}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Multi-User Signal Model}{10}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Impact of Imperfect CSI}{11}{subsubsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.3}Results}{11}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Bit-Error Rate Performance}{11}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Achievable Capacity}{12}{subsubsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.4}Phase II Conclusions}{13}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Overall Conclusions}{14}{section.4}%
