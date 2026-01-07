@@ -1,0 +1,20 @@
+\section{Introduction}
+
+The rapid growth of wireless communication systems and the increasing demand for flexible, low-power and highly integrated devices have driven the development of Software Defined Radio (SDR) architectures. In such systems, a significant portion of the signal processing is performed in the digital domain, which places stringent requirements on the analog front-end in terms of gain, noise, linearity and bandwidth to ensure proper signal digitization.
+
+The radio-frequency front-end (RF Front-End -- RFFE) plays a key role in the overall receiver performance, as it is responsible for the initial amplification of the weak signal captured by the antenna, the frequency translation to an intermediate frequency, and the conditioning of the signal to meet the input requirements of the analog-to-digital converter (ADC). In particular, the first active block of the receiver, typically a low-noise amplifier (LNA), has a dominant impact on the overall noise figure, while the subsequent stages largely determine the linearity, interference tolerance and dynamic range of the receiver.
+
+In this project, an RF front-end for a low data-rate SDR receiver operating in the ISM band is studied, designed and simulated using a Low-IF architecture. This receiver topology represents a suitable compromise between the complexity of classical heterodyne receivers and the challenges associated with direct-conversion architectures, allowing the mitigation of DC offsets and low-frequency noise while maintaining a relatively simple and power-efficient implementation.
+
+The adopted architecture consists of a 50~$\Omega$ input-matched LNA, followed by two quadrature mixers driven by local oscillator signals with a $90^\circ$ phase difference, enabling the generation of the in-phase (I) and quadrature (Q) baseband components. After frequency downconversion, the signals are amplified and filtered at intermediate frequency (IF) before being applied to the ADCs, as illustrated in Fig.~\ref{fig:rffe_block}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.60\linewidth]{Images/rffe_block.png}
+  \caption{Simplified block diagram of the Low-IF SDR receiver RF front-end with I/Q paths.}
+  \label{fig:rffe_block}
+\end{figure}
+
+The main objective of this work is to properly dimension each building block of the RF front-end in order to meet the system-level specifications, namely total gain, noise figure, linearity metrics (P1dB and IIP3), bandwidth and power consumption. To this end, an analytical design approach is first employed, followed by validation through circuit-level simulations using Cadence SpectreRF. The obtained simulation results are then compared with theoretical predictions, allowing a critical discussion of the main design trade-offs.
+
+\newpage

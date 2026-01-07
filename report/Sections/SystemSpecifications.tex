@@ -1,0 +1,38 @@
+\section{System Specifications}
+
+The RF front-end is designed according to the system-level requirements defined for a low data-rate SDR receiver operating in the ISM band. These specifications are derived from the application constraints and from the project statement provided in the course. They establish the performance targets that guide the design and dimensioning of each building block of the receiver.
+
+Table~\ref{tab:system_specs} summarizes the main system specifications considered throughout this work. These requirements are used as reference values for the analytical calculations and circuit-level simulations presented in the following sections.
+
+\begin{table}[H]
+\centering
+\caption{System-level specifications for the SDR receiver front-end}
+\label{tab:system_specs}
+\begin{tabular}{l c}
+\hline
+\textbf{Parameter} & \textbf{Specification} \\
+\hline
+Operating band & ISM ( 915 MHz) \\
+Receiver architecture & Low-IF \\
+Modulation scheme & FSK / ASK \\
+Data rate & 40 kbps \\
+Target BER & $10^{-4}$ \\
+TX EIRP & 0 dBm \\
+Maximum coverage range & 100 m \\
+Adjacent-channel blocker & $-30$ dBm @ $f_{\mathrm{IF}} + 300$ kHz \\
+Allowed SNR degradation & $\leq 2$ dB \\
+Minimum P1dB & $>-10$ dBm \\
+Minimum IIP3 & $\geq -14$ dBm \\
+ADC input range & 1 V$_\mathrm{pp}$ \\
+ADC resolution & 8 bits \\
+ADC sampling frequency & 10 MHz \\
+CMOS technology & 65 nm \\
+Supply voltage & 1.2 V \\
+\hline
+\end{tabular}
+\end{table}
+
+These specifications impose stringent requirements on the RF front-end, particularly in terms of noise figure, linearity and gain distribution. In the following sections, these constraints are translated into block-level requirements and used to guide the design of the LNA, mixers, IF amplifiers and local oscillator circuitry.
+
+
+\newpage

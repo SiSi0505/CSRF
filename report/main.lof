@@ -1,0 +1,4 @@
+\babel@toc {english}{}\relax 
+\contentsline {figure}{\numberline {1}{\ignorespaces Simplified block diagram of the Low-IF SDR receiver RF front-end with I/Q paths.}}{4}{figure.caption.2}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Schematic of the implemented common-source LNA with inductive source degeneration and on-chip spiral inductors.}}{9}{figure.caption.5}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Simulated S-parameters of the LNA: $S_{11}$, $S_{21}$, $S_{12}$ and $S_{22}$.}}{10}{figure.caption.6}%

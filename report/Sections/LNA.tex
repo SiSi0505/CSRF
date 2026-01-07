@@ -1,0 +1,127 @@
+\section{LNA Design}
+
+The low-noise amplifier (LNA) is the first active block of the receiver RF front-end and therefore has a dominant impact on the overall noise figure and sensitivity of the system. In addition to providing sufficient gain, the LNA must ensure proper impedance matching to the antenna while maintaining adequate linearity.
+
+In this work, a common-source (CS) LNA with inductive source degeneration was adopted. Although a common-gate (CG) topology can also provide inherent input matching, the CS topology offers a more favorable trade-off between noise figure, gain and power consumption at the operating frequency of 915~MHz.
+
+Inductive source degeneration enables simultaneous noise optimization and input impedance matching to 50~$\Omega$ without the use of resistive elements at the input. In this configuration, the real part of the input impedance is mainly determined by the transconductance of the input transistor, while the gate inductance is used to resonate out the input capacitance at the center frequency.
+
+The operating region and biasing conditions of the LNA input transistor were carefully selected in order to satisfy the requirements of input matching, noise performance and linearity. For a common-source LNA with inductive source degeneration, the real part of the input impedance can be approximated by $1/g_m$. Therefore, achieving a proper match to a 50~$\Omega$ source requires a transconductance on the order of
+\[
+g_m \approx \frac{1}{50~\Omega} = 20~\text{mS}.
+\]
+
+This transconductance level strongly influences the choice of the transistor operating region. Although weak or moderate inversion operation can provide higher transconductance efficiency, strong inversion was selected in this design to ensure sufficient linearity and robustness against large input signals, which is particularly important in the presence of in-band and adjacent-channel interferers.
+
+Once the target transconductance was defined, the bias current was selected accordingly. The input transistor was biased with a drain current of approximately 0.16~mA, resulting in a simulated transconductance close to the required 20~mS. This choice represents a compromise between power consumption and RF performance, while remaining compatible with the overall system specifications.
+
+DC operating point simulations confirm that the input transistor operates in strong inversion and remains in saturation under nominal conditions. The simulated gate-to-source voltage, drain-to-source voltage and drain current provide sufficient voltage headroom to guarantee proper RF operation, avoiding triode-region operation across the expected signal swing. These biasing conditions ensure stable small-signal behavior and consistent large-signal performance.
+
+The operating region and biasing conditions of the LNA input device were selected to meet the input matching, noise and linearity requirements at 915~MHz. For a common-source LNA with inductive source degeneration and a series gate inductor, the input impedance can be approximated by
+\[
+Z_{in} \approx \frac{1}{j\omega C_{gs}} + j\omega(L_g+L_s) + \frac{g_m L_s}{C_{gs}} .
+\]
+This expression shows that the real part is approximately frequency-independent and given by
+\[
+\Re\{Z_{in}\} \approx \frac{g_m L_s}{C_{gs}} .
+\]
+Therefore, imposing a 50~$\Omega$ input match at the design frequency leads to the matching condition
+\[
+\frac{g_m L_s}{C_{gs}} \approx 50~\Omega,
+\]
+while the reactive component is canceled by choosing the total series inductance such that
+\[
+\Im\{Z_{in}\}=0 \ \Rightarrow \ L_g+L_s \approx \frac{1}{\omega_0^2 C_{gs}},
+\]
+with $\omega_0 = 2\pi\cdot 915~\text{MHz}$.
+
+In practice, at 915~MHz and in a 65~nm CMOS process, using an on-chip degeneration inductance on the order of 1~nH is realistic, but the corresponding matching condition depends strongly on the effective $C_{gs}$ and on the ratio $g_m/C_{gs} \approx \omega_T$. For this reason, the input capacitance was shaped not only by the intrinsic transistor capacitances (set by device sizing) but also with an explicit capacitor $C_{ex}$ connected at the input node. This approach effectively lowers the apparent $\omega_T$ seen at the input network and allows accurate matching with practical integrated inductor values.
+
+The bias current was selected to obtain the required transconductance while keeping the power consumption low. DC operating point simulations yield a drain current of approximately $I_D \approx 0.16$~mA and a small-signal transconductance around $g_m \approx 20$~mS at the operating point. These values, together with the chosen $L_s$ and the effective input capacitance, lead to an input impedance very close to the target: simulations show $\Re\{Z_{in}\}\approx 50.6~\Omega$ and $\Im\{Z_{in}\}\approx 0$ at 915~MHz, confirming the validity of the matching design.
+
+The transistor dimensions were implemented in Cadence using a combination of unit width ($w_x$), number of fingers, and multiplicity factors. In particular, the parameter \texttt{k} acts as a parallel multiplier (Cadence \texttt{m}-parameter), meaning that it replicates the transistor device \texttt{k} times in parallel, scaling the total effective width proportionally. For a device defined with unit width $w_x$ and \texttt{fingers} equal to $N_f$, the effective total gate width becomes
+\[
+W_{\text{tot}} = w_x \cdot N_f \cdot k .
+\]
+This sizing approach is convenient in RF design because it allows sweeping the total width (and therefore $g_m$ and parasitic capacitances) without modifying the unit device geometry, which is beneficial for layout regularity and for controlling gate resistance. In the implemented LNA, the main RF transistor width is therefore defined by \texttt{wx0}, \texttt{fingers\_m0} and the multiplicity factor \texttt{k}, while auxiliary devices (cascode and bias transistors) are sized independently to ensure proper biasing and isolation.
+
+\textcolor{red}{\textbf{[TO DO: INSERT HERE THE COMPLETE ANALYTICAL DIMENSIONING PROCEDURE OF THE LNA, INCLUDING THE DERIVATION OF $g_m$, DEVICE SIZING, INDUCTOR SELECTION AND NOISE OPTIMIZATION.]}}
+
+The initial sizing of the LNA was performed using the design parameters summarized in Table~\ref{tab:lna_design_parameters}. These values were provided as a reference starting point for the circuit dimensioning and were subsequently refined through analytical calculations and circuit-level simulations.
+
+\begin{table}[H]
+\centering
+\caption{LNA Design Parameters Used for Initial Dimensioning}
+\label{tab:lna_design_parameters}
+\begin{tabular}{|l|c|l|}
+\hline
+\textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
+\hline
+$V_{\mathrm{DD}}$        & 1.2 V   & Supply voltage \\
+$f_0$                   & 915 MHz & Target operating frequency \\
+$I_b$                   & 0.16 mA & Bias current \\
+$V_b$                   & 0.63 V  & Bias voltage \\
+\hline
+$L_g$                   & 54.4 nH & Gate inductance \\
+$L_s$                   & 1 nH    & Source degeneration inductance \\
+$L_d$                   & 3 nH    & Drain inductance \\
+\hline
+$C_g$                   & 1 mF    & Gate coupling capacitor \\
+$C_{ex}$                & 0.50 pF & External input capacitance \\
+$C_L$                   & 10 pF   & Load capacitance \\
+\hline
+$w_{x0}$                & 2.2 $\mu$m & Input transistor unit width \\
+$w_{x1}$                & 2.2 $\mu$m & Cascode transistor unit width \\
+$w_{x2}$                & 0.85 $\mu$m & Bias transistor unit width \\
+\hline
+$fingers_{m0}$          & 2 & Input transistor fingers \\
+$fingers_{m1}$          & 2 & Cascode transistor fingers \\
+$fingers_{m2}$          & 2 & Bias transistor fingers \\
+\hline
+$k$                     & 7 & RF transistor multiplicity factor \\
+$k_2$                   & 1 & Bias scaling factor \\
+\hline
+\end{tabular}
+\end{table}
+
+\textcolor{red}{\textbf{[TO DO: EXPLAIN HOW THE VALUES IN TABLE~\ref{tab:lna_design_parameters} WERE DERIVED, INCLUDING THE ROLE OF $k$ AND THE EFFECTIVE TRANSISTOR WIDTH.]}}
+
+The implemented LNA schematic, including the integrated spiral inductors used for input matching and load, is shown in Fig.~\ref{fig:lna_schematic}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{Images/lnasingle.png}
+  \caption{Schematic of the implemented common-source LNA with inductive source degeneration and on-chip spiral inductors.}
+  \label{fig:lna_schematic}
+\end{figure}
+
+The input matching and small-signal gain of the LNA were evaluated through S-parameter simulations. Figure~\ref{fig:lna_sparams} shows the simulated $S_{11}$, $S_{21}$, $S_{12}$ and $S_{22}$ parameters over frequency. At the operating frequency of 915~MHz, the input reflection coefficient $S_{11}$ exhibits a deep minimum well below the $-10$~dB criterion, confirming accurate matching to 50~$\Omega$. The forward gain $S_{21}$ reaches approximately 13.3~dB at the same frequency. The reverse isolation $S_{12}$ remains well below $-50$~dB, while $S_{22}$ indicates acceptable output matching around the operating frequency.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\linewidth]{Images/paramS.png}
+  \caption{Simulated S-parameters of the LNA: $S_{11}$, $S_{21}$, $S_{12}$ and $S_{22}$.}
+  \label{fig:lna_sparams}
+\end{figure}
+
+\textcolor{red}{\textbf{[TO DO: INSERT HERE THE NOISE FIGURE ANALYSIS AND DISCUSSION, INCLUDING THE CONTRIBUTION OF THE INPUT TRANSISTOR AND THE MATCHING NETWORK.]}}
+
+The noise performance of the LNA was evaluated using periodic steady-state noise simulations. The resulting noise figure as a function of frequency is shown in Fig.~\ref{fig:lna_nf}. At the operating frequency of 915~MHz, the simulated noise figure confirms that the LNA provides low-noise amplification, ensuring that the overall receiver noise performance is dominated by the first stage.
+
+\textcolor{red}{\textbf{[TO DO: INSERT HERE THE ANALYTICAL EXPECTATION FOR THE 1~dB COMPRESSION POINT AND ITS RELATION TO BIAS CURRENT AND DEVICE SIZING.]}}
+
+The large-signal linearity of the LNA was first evaluated through a swept-input power simulation in order to extract the 1~dB compression point. The corresponding output power characteristic is shown in Fig.~\ref{fig:lna_p1db}.
+
+\textcolor{red}{\textbf{[TO DO: INSERT HERE THE THEORETICAL BACKGROUND ON THIRD-ORDER NONLINEARITY AND THE EXPECTED IIP3 FOR THE CHOSEN TOPOLOGY.]}}
+
+Third-order nonlinearity was assessed using a two-tone input test. The intermodulation products and the extraction of the third-order input intercept point (IIP3) are illustrated in Fig.~\ref{fig:lna_iip3}.
+
+\textcolor{red}{\textbf{[TO DO: INSERT HERE THE DC OPERATING POINT VALUES (VGS, VDS, ID) AND A DISCUSSION ON SATURATION MARGIN.]}}
+
+The DC operating point of the LNA input transistor was verified through operating point simulations to ensure saturation and sufficient voltage headroom. The relevant bias voltages and currents are summarized in Fig.~\ref{fig:lna_dc}.
+
+
+
+
+
+\newpage
